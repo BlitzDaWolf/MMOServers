@@ -1,0 +1,73 @@
+﻿using NetCommen;
+using System.Net;
+
+namespace ClientCommon
+{
+    public class ClientSystem
+    {
+        public readonly Client Client;
+
+        public ClientSystem()
+        {
+            Client.packetHandle = HandlePacket;
+            Client = new Client(-1);
+        }
+
+        private void HandlePacket(int clientId, Packet packet)
+        {
+            int packetId = packet.ReadInt();
+            switch (packetId)
+            {
+                case NETWORK_COMMANDS.SC_Handshake:
+                    string NetworkVersion = packet.ReadString();
+                    if (NetworkVersion != NETWORK_COMMANDS.NETWORK_VERSION)
+                    {
+                        Client.tcp.Disconect();
+                    }
+                    int challange = packet.ReadInt();
+                    int response = NetworkCallbacks.checkChalange(challange);
+
+                    Packet respPacket = new Packet(NETWORK_COMMANDS.CS_Handshake);
+                    respPacket.Write(response);
+                    respPacket.WriteLength();
+
+                    Client.tcp.SendData(respPacket);
+                    return;
+                case NETWORK_COMMANDS.SC_ACK:
+                    bool err = packet.ReadBool();
+                    int id = packet.ReadInt();
+                    IPEndPoint? endPoint = (IPEndPoint?)Client.tcp.socket.Client.LocalEndPoint;
+                    if (endPoint == null)
+                        return;
+                    Client.id = id;
+                    Client.tcp.id = id;
+                    Client.udp.id = id;
+                    Client.udp.Connect(endPoint.Port);
+
+                    Console.WriteLine("Connection completed");
+                    return;
+            }
+            ovr_HandleData(clientId, packet, packetId);
+        }
+
+        public virtual void ovr_HandleData(int clientId, Packet packet, int PacketId) { }
+
+        public void Connect(string ip, int port)
+        {
+            try
+            {
+                Client.tcp.Connect(ip, port);
+
+                while (!Client.IsConnected) { }
+                Packet pkt = new Packet(NETWORK_COMMANDS.CS_ALIVE);
+                pkt.Write(0);
+                pkt.WriteLength();
+                Client.tcp.SendData(pkt);
+            }
+            catch (Exception e)
+            {
+
+            }
+        }
+    }
+}
