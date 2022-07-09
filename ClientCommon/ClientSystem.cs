@@ -15,6 +15,12 @@ namespace ClientCommon
             NetworkCallbacks.Conncted = Connected;
         }
 
+
+        /// <summary>
+        /// Handles the default incoming packets
+        /// </summary>
+        /// <param name="clientId">Id of the client their socket</param>
+        /// <param name="packet">Packet</param>
         public void HandlePacket(int clientId, Packet packet)
         {
             int packetId = packet.ReadInt();
@@ -55,6 +61,9 @@ namespace ClientCommon
 
         public virtual void ovr_HandleData(int clientId, Packet packet, int PacketId) { }
 
+        /// <summary>
+        /// If the TCP connection has been made send alive message
+        /// </summary>
         public void Connected()
         {
             Packet pkt = new Packet(NETWORK_COMMANDS.CS_ALIVE);
@@ -63,6 +72,11 @@ namespace ClientCommon
             Client.tcp.SendData(pkt);
         }
 
+        /// <summary>
+        /// Connect to the server
+        /// </summary>
+        /// <param name="ip">Server ip</param>
+        /// <param name="port">Server port</param>
         public void Connect(string ip, int port)
         {
             try

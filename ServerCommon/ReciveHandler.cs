@@ -12,6 +12,9 @@ namespace MainServer
     public delegate void CS_PlayerWarp(int id, Packet pkt);
     public delegate void CS_PlayerDie(int id, Packet pkt);
 
+    /// <summary>
+    /// Basic packet handeling
+    /// </summary>
     public class ReciveHandler
     {
         public static CS_PlayerAction CS_PlayerAction = (int id, Packet pkt, int packetId) => { };
@@ -27,6 +30,12 @@ namespace MainServer
             this.Logger = logger;
         }
 
+        /// <summary>
+        /// Check the client handshake
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="pkt"></param>
+        /// <returns>If the client has passed the challange</returns>
         public bool CS_Handshake(int id, Packet pkt)
         {
             Client? c = Network.GetClient(id);

@@ -29,6 +29,11 @@ namespace EventServer
             return (answer * 5) << 2;
         }
 
+        /// <summary>
+        /// Handles the default incoming packets
+        /// </summary>
+        /// <param name="clientId">Id of the client their socket</param>
+        /// <param name="packet">Packet</param>
         private void HandlePacket(int clientId, Packet packet)
         {
             int packetID = packet.ReadInt();
@@ -76,18 +81,8 @@ namespace EventServer
             stopwatch.Start();
 
             while (!stoppingToken.IsCancellationRequested)
-            {
-                /*if (ticks % 40 == 0)
-                {
-                    if (ticks != 0)
-                    {
-                        long tps = ticks / (stopwatch.Elapsed.Ticks / 10000000);
-                        Logger.LogInformation($"{stopwatch.Elapsed}/{tps}");
-                    }
-                }*/
-                
+            {                
                 await ServerTick();
-
 
                 while (stopwatch.Elapsed.Ticks < nextLastTick)
                     await Task.Delay(1);

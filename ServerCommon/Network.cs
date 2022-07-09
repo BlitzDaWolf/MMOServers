@@ -44,6 +44,11 @@ namespace MainServer
             InitiliazeClients();
         }
 
+        /// <summary>
+        /// Gets a spesific client
+        /// </summary>
+        /// <param name="clientId">Client to lookup</param>
+        /// <returns>Found client</returns>
         public Client? GetClient(int clientId)
         {
             if (clients.ContainsKey(clientId))
@@ -60,6 +65,12 @@ namespace MainServer
             return null;
         }
 
+        /// <summary>
+        /// Sends a package to all the connected clients
+        /// </summary>
+        /// <param name="pkt">package to send</param>
+        /// <param name="protocol">TCP, UDP</param>
+        /// <param name="ignore">Wich client to ignore</param>
         public void SendToAllClients(IPackage pkt, int protocol = 0, int ignore = -1)
         {
             foreach (var client in clients.Values)
@@ -71,6 +82,12 @@ namespace MainServer
             }
         }
 
+        /// <summary>
+        /// Sends a Packet to all the connected clients
+        /// </summary>
+        /// <param name="pkt">Packet to send</param>
+        /// <param name="protocol">TCP, UDP</param>
+        /// <param name="ignore">Wich client to ignore</param>
         public void SendToAllClients(Packet pkt, int protocol = 0, int ignore = -1)
         {
             foreach (var client in clients.Values)
@@ -82,9 +99,13 @@ namespace MainServer
             }
         }
 
+        /// <summary>
+        /// Handles the disconection from a client
+        /// </summary>
+        /// <param name="clientId">Disconected client</param>
         private void PlayerDisconect(int clientId)
         {
-            if(clientId == -1)
+            if(clientId < 0)
             {
                 Logger.LogInformation($"The event server has been closed.");
                 return;
@@ -102,6 +123,9 @@ namespace MainServer
             }
         }
 
+        /// <summary>
+        /// Starts up the networking
+        /// </summary>
         public void Start()
         {
             TcpListener = new TcpListener(IPAddress.Any, Port);
@@ -114,6 +138,11 @@ namespace MainServer
             Logger.LogInformation($"Server started on port {Port}");
         }
 
+        /// <summary>
+        /// Send a UDP packet to a endpoint
+        /// </summary>
+        /// <param name="_clientEndPoint">To who does the package needs to be send</param>
+        /// <param name="_packet">Packet to send</param>
         public void SendUDPData(IPEndPoint _clientEndPoint, Packet _packet)
         {
             try
@@ -129,6 +158,9 @@ namespace MainServer
             }
         }
 
+        /// <summary>
+        /// Arival of UDP packets
+        /// </summary>
         private void UDPReceiveCallback(IAsyncResult result)
         {
             try
@@ -192,6 +224,9 @@ namespace MainServer
             Logger.LogInformation($"{client.Client.RemoteEndPoint} failed to connect: Server full!");
         }
 
+        /// <summary>
+        /// Create all clients
+        /// </summary>
         private void InitiliazeClients()
         {
             for (int i = 1; i <= MaxPlayers; i++)
