@@ -8,9 +8,6 @@ namespace NetCommen
     {
         public const int dataBufferSize = 4096;
 
-        public static string ip = "127.0.0.1";
-        public static int port = 7575;
-
         public int id;
         public TCP tcp;
         public UDP udp;
@@ -31,23 +28,23 @@ namespace NetCommen
             }
         }
 
-        public static PacketHandler packetHandle = (int i, Packet p) => { };
+        public PacketHandler packetHandle = (int i, Packet p) => { };
         public static DisconectHandler disconectHandler = (int i) => {};
 
         public Client(int _clientId)
         {
             id = _clientId;
-            tcp = new TCP(id);
-            udp = new UDP(id);
+            tcp = new TCP(id, this);
+            udp = new UDP(id, this);
         }
 
         public class TCP : INetworkClient
         {
+            private readonly Client c;
             public bool IsServer { get; set; } = false;
 
             public TcpClient socket;
             public int id;
-
             private NetworkStream stream;
             private Packet receivedData;
             private byte[] receiveBuffer;
@@ -55,9 +52,10 @@ namespace NetCommen
 
             public int challange { get; private set; }
 
-            public TCP(int _id)
+            public TCP(int _id, Client c)
             {
                 id = _id;
+                this.c = c;
             }
 
             public void Connect(string ip, int port)
@@ -71,11 +69,9 @@ namespace NetCommen
                 connected = true;
                 IsServer = false;
 
-                NetworkCallbacks.Conncted();
                 receiveBuffer  = new byte[dataBufferSize];
                 receivedData = new Packet();
 
-                NetworkCallbacks.Conncted();
                 socket.BeginConnect(ip, port, ConnectCallback, socket);
             }
 
@@ -114,6 +110,8 @@ namespace NetCommen
 
                 stream = socket.GetStream();
                 receivedData = new Packet();
+
+                NetworkCallbacks.Conncted();
                 stream.BeginRead(receiveBuffer , 0, receiveBuffer .Length, ReciveCallback, null);
             }
 
@@ -206,7 +204,7 @@ namespace NetCommen
                 {
                     byte[] _packetbytes = receivedData.ReadBytes(_packetLength);
                     Packet _packet = new Packet(_packetbytes);
-                    packetHandle(id, _packet);
+                    c.packetHandle(id, _packet);
                 }
 
                 _packetLength = 0;
@@ -231,6 +229,12 @@ namespace NetCommen
 
         public class UDP : INetworkClient
         {
+
+            public string ip = "127.0.0.1";
+            public int port = 7575;
+
+            private Client c;
+
             public UdpClient socket;
             public IPEndPoint endPoint;
 
@@ -238,8 +242,9 @@ namespace NetCommen
 
             public int id;
 
-            public UDP(int _id)
+            public UDP(int _id, Client c)
             {
+                this.c = c;
                 id = _id;
             }
 
@@ -263,6 +268,7 @@ namespace NetCommen
             {
                 IsServer = true;
                 endPoint = _endPoint;
+                NetworkCallbacks.OnClientConnected(c);
             }
 
             public void Connect(int _localPort)
@@ -298,7 +304,8 @@ namespace NetCommen
 
             public void SendData(Packet _packet)
             {
-                NetworkCallbacks.sendData(endPoint, _packet);
+                if (endPoint != null)
+                    NetworkCallbacks.sendData(endPoint, _packet);
             }
 
             public void SendData(IPackage packet)
@@ -319,7 +326,7 @@ namespace NetCommen
             public void HandleData(Packet _packetData)
             {
                 int _packetLength = _packetData.ReadInt();
-                packetHandle(id, _packetData);
+                c.packetHandle(id, _packetData);
             }
 
             public void Disconect()

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using NetCommen;
+using NetCommen.Interface;
 using System.Net;
 using System.Net.Sockets;
 
@@ -9,6 +10,7 @@ namespace MainServer
     public class Network
     {
         protected readonly IConfiguration configuration;
+        public PacketHandler packetHandle = (int i, Packet p) => { };
 
         public TcpListener? Listener;
         public ILogger<Network> Logger;
@@ -19,6 +21,14 @@ namespace MainServer
 
         private TcpListener TcpListener;
         private UdpClient UdpListener;
+
+        public int ConnectedClients
+        {
+            get
+            {
+                return clients.Values.Count(x => x.IsConnected);
+            }
+        }
 
         public Network(ILogger<Network> logger, IConfiguration configuration)
         {
@@ -50,6 +60,17 @@ namespace MainServer
             return null;
         }
 
+        public void SendToAllClients(IPackage pkt, int protocol = 0, int ignore = -1)
+        {
+            foreach (var client in clients.Values)
+            {
+                if (client.tcp.connected && client.id != ignore)
+                {
+                    client.NetworkClient[protocol].SendData(pkt);
+                }
+            }
+        }
+
         public void SendToAllClients(Packet pkt, int protocol = 0, int ignore = -1)
         {
             foreach (var client in clients.Values)
@@ -63,14 +84,22 @@ namespace MainServer
 
         private void PlayerDisconect(int clientId)
         {
-            Logger.LogInformation($"Client({clientId}) disconected");
+            if(clientId == -1)
+            {
+                Logger.LogInformation($"The event server has been closed.");
+                return;
+            }
+            else
+            {
+                Logger.LogInformation($"Client({clientId}) disconected");
 
-            clients[clientId].Disconect();
+                clients[clientId].Disconect();
 
-            Packet pkt = new Packet(NETWORK_COMMANDS.SC_PlayerDisconect);
-            pkt.Write(clientId);
-            pkt.WriteLength();
-            SendToAllClients(pkt, 0, clientId);
+                Packet pkt = new Packet(NETWORK_COMMANDS.SC_PlayerDisconect);
+                pkt.Write(clientId);
+                pkt.WriteLength();
+                SendToAllClients(pkt, 0, clientId);
+            }
         }
 
         public void Start()
@@ -104,9 +133,12 @@ namespace MainServer
         {
             try
             {
+                Logger.LogInformation("Listening for a UDP packet");
                 IPEndPoint _clientEndPoint = new IPEndPoint(IPAddress.Any, 0);
                 byte[] _data = UdpListener.EndReceive(result, ref _clientEndPoint);
                 UdpListener.BeginReceive(UDPReceiveCallback, null);
+
+                Logger.LogInformation("Recived a UDP packet");
 
                 if (_data.Length < 4)
                 {
@@ -164,7 +196,9 @@ namespace MainServer
         {
             for (int i = 1; i <= MaxPlayers; i++)
             {
-                clients.Add(i, new Client(i));
+                clients.Add(i, new Client(i) { packetHandle = (int i, Packet p) => {
+                    packetHandle(i, p);
+                } });
             }
         }
     }

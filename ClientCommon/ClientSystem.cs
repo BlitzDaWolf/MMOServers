@@ -9,11 +9,13 @@ namespace ClientCommon
 
         public ClientSystem()
         {
-            Client.packetHandle = HandlePacket;
             Client = new Client(-1);
+            Client.packetHandle = HandlePacket;
+
+            NetworkCallbacks.Conncted = Connected;
         }
 
-        private void HandlePacket(int clientId, Packet packet)
+        public void HandlePacket(int clientId, Packet packet)
         {
             int packetId = packet.ReadInt();
             switch (packetId)
@@ -39,6 +41,7 @@ namespace ClientCommon
                     IPEndPoint? endPoint = (IPEndPoint?)Client.tcp.socket.Client.LocalEndPoint;
                     if (endPoint == null)
                         return;
+
                     Client.id = id;
                     Client.tcp.id = id;
                     Client.udp.id = id;
@@ -52,17 +55,21 @@ namespace ClientCommon
 
         public virtual void ovr_HandleData(int clientId, Packet packet, int PacketId) { }
 
+        public void Connected()
+        {
+            Packet pkt = new Packet(NETWORK_COMMANDS.CS_ALIVE);
+            pkt.Write(0);
+            pkt.WriteLength();
+            Client.tcp.SendData(pkt);
+        }
+
         public void Connect(string ip, int port)
         {
             try
             {
                 Client.tcp.Connect(ip, port);
-
-                while (!Client.IsConnected) { }
-                Packet pkt = new Packet(NETWORK_COMMANDS.CS_ALIVE);
-                pkt.Write(0);
-                pkt.WriteLength();
-                Client.tcp.SendData(pkt);
+                Client.udp.ip = ip;
+                Client.udp.port = port;
             }
             catch (Exception e)
             {

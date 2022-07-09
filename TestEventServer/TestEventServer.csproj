@@ -4,8 +4,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>dotnet-MainServer-E1DDA914-AF30-4C33-92FA-152A56AF4191</UserSecretsId>
-    <OutputType>Library</OutputType>
+    <UserSecretsId>dotnet-TestEventServer-96DF1CB4-9A9B-4569-A48B-0FDACA9956CB</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,8 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ClientCommon\ClientCommon.csproj" />
-    <ProjectReference Include="..\NetCommen\NetCommen.csproj" />
-    <ProjectReference Include="..\ServerCommon\ServerCommon.csproj" />
+    <ProjectReference Include="..\EventCommon\EventCommon.csproj" />
+    <ProjectReference Include="..\EventServer\EventServer.csproj" />
   </ItemGroup>
 </Project>

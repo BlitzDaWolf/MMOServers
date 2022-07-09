@@ -7,6 +7,7 @@ namespace NetCommen
     public delegate void PacketHandler(int clientId, Packet packet);
     public delegate void DisconectHandler(int clientId);
 
+    public delegate void OnClientConnected(Client c);
     public delegate void SendData(IPEndPoint endPoint, Packet _packet);
 
     public delegate int CreateChallange();
@@ -19,6 +20,7 @@ namespace NetCommen
         public static CreateChallange createChallange = () => 0;
         public static CheckChalange checkChalange = (int a) => 0;
 
+        public static OnClientConnected OnClientConnected = (Client c) => { };
         public static OnConnected Conncted = () => { };
     }
 }

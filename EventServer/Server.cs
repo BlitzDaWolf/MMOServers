@@ -1,51 +1,35 @@
-﻿using NetCommen;
-using ServerCommon;
+﻿using MainServer;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using NetCommen;
 using System.Diagnostics;
 
-namespace MainServer
+namespace EventServer
 {
     public class Server : BackgroundService
     {
         public readonly ILogger<Server> Logger;
         public readonly Network Network;
         public readonly ReciveHandler ReciveHandler;
-        public readonly EventConnection EventServer;
 
-        public Server(ILogger<Server> logger, Network network, ReciveHandler serverHandler, EventConnection eventServer)
+        public Server(ILogger<Server> logger, Network network, ReciveHandler serverHandler)
         {
             Logger = logger;
             Network = network;
             ReciveHandler = serverHandler;
-            EventServer = eventServer;
 
             Network.packetHandle = HandlePacket;
             NetworkCallbacks.createChallange = GenerateChallange;
             NetworkCallbacks.checkChalange = CheckChallange;
+            NetworkCallbacks.OnClientConnected = OnClientConnect;
         }
 
-        /// <summary>
-        /// Challange verification
-        /// </summary>
         private int CheckChallange(int answer)
         {
             return (answer * 5) << 2;
         }
 
-        /// <summary>
-        /// Generates the challange for the handshake
-        /// </summary>
-        /// <returns>Challange</returns>
-        public int GenerateChallange()
-        {
-            return 5;
-        }
-
-        /// <summary>
-        /// Handles the default incoming packets
-        /// </summary>
-        /// <param name="clientId">Id of the client their socket</param>
-        /// <param name="packet">Packet</param>
-        public void HandlePacket(int clientId, Packet packet)
+        private void HandlePacket(int clientId, Packet packet)
         {
             int packetID = packet.ReadInt();
 
@@ -57,27 +41,7 @@ namespace MainServer
                 case NETWORK_COMMANDS.CS_Handshake:
                     if (ReciveHandler.CS_Handshake(clientId, packet))
                     {
-                        OnClientConnect(Network.GetClient(clientId));
-                    }
-                    return;
-                case NETWORK_COMMANDS.SC_Handshake:
-                case NETWORK_COMMANDS.SC_ACK:
-                    packet.Reset(false);
-                    EventServer.HandlePacket(clientId, packet);
-                    return;
-                case NETWORK_COMMANDS.CS_Command:
-                    bool isAdminCmd = packet.ReadBool();
-                    if (isAdminCmd)
-                    {
-                        AdminCommands acminCommand = new AdminCommands();
-                        acminCommand.UnPack(packet);
-                        CommandHandler.ExecuteAdminCommand(clientId, acminCommand);
-                    }
-                    else
-                    {
-                        NetworkCommand command = new NetworkCommand();
-                        command.UnPack(packet);
-                        CommandHandler.ExecuteCommand(clientId, command);
+                        // OnClientConnect(Network.GetClient(clientId));
                     }
                     return;
             }
@@ -85,10 +49,14 @@ namespace MainServer
             Ovr_HandlePacket(clientId, packet, packetID);
         }
 
-        /// <summary>
-        /// Executes evry update tick
-        /// </summary>
+        public int GenerateChallange()
+        {
+            return 5;
+        }
+
         public virtual async Task ServerTick() => await Task.Delay(1);
+
+
         public virtual void Ovr_HandlePacket(int clientId, Packet packet, int packetID) { }
         public virtual void OnClientConnect(Client? c)
         {
@@ -99,7 +67,6 @@ namespace MainServer
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             Network.Start();
-            EventServer.Connect();
 
             double t = 1d / 40d;
 
@@ -118,7 +85,7 @@ namespace MainServer
                         Logger.LogInformation($"{stopwatch.Elapsed}/{tps}");
                     }
                 }*/
-
+                
                 await ServerTick();
 
 

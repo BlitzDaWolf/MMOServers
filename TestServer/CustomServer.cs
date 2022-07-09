@@ -1,16 +1,17 @@
+using EventCommon;
 using MainServer;
 using NetCommen;
 using TestCommon;
 
-namespace TestServer
+namespace TestEventServer
 {
     public class CustomServer : Server
     {
         public ServerHandler ServerHandler { get; private set; }
         public List<NPC> npcs { get; private set; } = new List<NPC>();
 
-        public CustomServer(ILogger<CustomServer> logger, Network network, ServerHandler handler, ReciveHandler reciveHandler) :
-            base(logger, network, reciveHandler)
+        public CustomServer(ILogger<CustomServer> logger, Network network, ServerHandler handler, ReciveHandler reciveHandler, EventConnection eventConnection) :
+            base(logger, network, reciveHandler, eventConnection)
         {
             ServerHandler = handler;
 
@@ -30,7 +31,15 @@ namespace TestServer
 
         public override void Ovr_HandlePacket(int clientId, Packet packet, int packetID)
         {
-            Logger.LogInformation("Testing");
+            // Logger.LogInformation($"Packet({packetID})");
+            switch (packetID)
+            {
+                case NETWORK_COMMANDS.ES_EventDetail:
+                    Event e = new Event();
+                    e.UnPack(packet);
+                    Logger.LogInformation($"Event({e.EventId})");
+                    return;
+            }
         }
 
         public override void OnClientConnect(Client c)

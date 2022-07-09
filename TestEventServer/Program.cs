@@ -6,9 +6,8 @@ IHost host = Host.CreateDefaultBuilder(args)
     {
         services.AddSingleton<Network>();
         services.AddSingleton<ReciveHandler>();
-        services.AddSingleton<EventConnection>();
-
         services.AddSingleton<ServerHandler>();
+
         services.AddHostedService<CustomServer>();
     })
     .Build();

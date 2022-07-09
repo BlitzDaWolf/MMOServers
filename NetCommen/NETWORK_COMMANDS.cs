@@ -28,6 +28,7 @@
         public const int CS_Action          = CS_Player + 4;
 
         public const int CS_Chat            = CS + 25;
+        public const int CS_Command         = CS + 26;
         #endregion
 
         #region Server_Client
@@ -57,15 +58,18 @@
 
         #region Server_Event
         public const int SE_Handshake       = SE + 0;
+        public const int SE_EventDetail     = SE + 14;
         #endregion
 
         #region Event_Server
         public const int ES_Handshake       = ES + 0;
+        public const int ES_Welcome         = ES + 1;
 
         public const int ES_StartEvent      = ES + 10;
         public const int ES_EndEvent        = ES + 11;
         public const int ES_EventSuccess    = ES + 12;
         public const int ES_EventFailed     = ES + 13;
+        public const int ES_EventDetail     = ES + 14;
 
         public const int ES_UpdateObjective = ES + 20;
         #endregion
