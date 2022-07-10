@@ -2,6 +2,7 @@ using EventCommon;
 using EventServer;
 using MainServer;
 using NetCommen;
+using NetCommen.NetworkClient;
 
 namespace TestEventServer
 {

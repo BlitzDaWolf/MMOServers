@@ -1,6 +1,8 @@
 using EventCommon;
 using MainServer;
 using NetCommen;
+using NetCommen.NetworkClient;
+using NetCommen.Object;
 using ServerCommon;
 using TestCommon;
 

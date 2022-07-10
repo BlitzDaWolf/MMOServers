@@ -1,4 +1,4 @@
-﻿namespace NetCommen
+﻿namespace NetCommen.Commands
 {
     public class AdminCommands :NetworkCommand
     {

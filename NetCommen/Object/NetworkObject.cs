@@ -2,7 +2,7 @@
 using NetCommen.Interface;
 using System.Reflection;
 
-namespace NetCommen
+namespace NetCommen.Object
 {
     public abstract class NetworkObject : IPackage
     {

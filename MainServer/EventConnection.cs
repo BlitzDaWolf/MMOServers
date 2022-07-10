@@ -15,6 +15,12 @@ namespace MainServer
             ip = configuration.GetValue<string>("eventserver:ip");
 
             Logger = logger;
+            checkChalange = AnswerQuyestion;
+        }
+
+        public int AnswerQuyestion(int question)
+        {
+            return (question * 5) << 2; ;
         }
 
         public void Connect()

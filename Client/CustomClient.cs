@@ -1,5 +1,6 @@
 ﻿using ClientCommon;
 using NetCommen;
+using NetCommen.Commands;
 using TestCommon;
 
 namespace Client
@@ -10,7 +11,7 @@ namespace Client
 
         public CustomClient() : base()
         {
-            NetworkCallbacks.checkChalange = CheckChallange;
+            checkChalange = CheckChallange;
         }
 
         public override void OnDisconect(int id)
@@ -45,7 +46,7 @@ namespace Client
                     continue;
                 if (chat.StartsWith("/"))
                 {
-                    NetCommen.NetworkCommand networkCommand = new NetCommen.NetworkCommand();
+                    NetworkCommand networkCommand = new NetworkCommand();
                     networkCommand.Arguments = chat.Split(' ');
                     switch (networkCommand.Arguments[0].ToLower())
                     {

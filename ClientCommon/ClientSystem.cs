@@ -1,4 +1,6 @@
 ﻿using NetCommen;
+using NetCommen.NetworkClient;
+using NetCommen.Object;
 using System.Net;
 
 namespace ClientCommon
@@ -6,6 +8,7 @@ namespace ClientCommon
     public class ClientSystem
     {
         public readonly Client Client;
+        public CheckChalange checkChalange = (int a) => 0;
 
         public ClientSystem()
         {
@@ -44,7 +47,7 @@ namespace ClientCommon
                         Client.tcp.Disconect();
                     }
                     int challange = packet.ReadInt();
-                    int response = NetworkCallbacks.checkChalange(challange);
+                    int response = checkChalange(challange);
 
                     Packet respPacket = new Packet(NETWORK_COMMANDS.CS_Handshake);
                     respPacket.Write(response);

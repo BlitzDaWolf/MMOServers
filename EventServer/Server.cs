@@ -2,6 +2,8 @@
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using NetCommen;
+using NetCommen.NetworkClient;
+using NetCommen.Object;
 using System.Diagnostics;
 
 namespace EventServer

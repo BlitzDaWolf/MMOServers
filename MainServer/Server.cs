@@ -1,15 +1,22 @@
 ﻿using NetCommen;
+using NetCommen.Commands;
+using NetCommen.NetworkClient;
+using NetCommen.Object;
 using ServerCommon;
 using System.Diagnostics;
 
 namespace MainServer
 {
+    public delegate bool ValidateClient(int networkType);
+
     public class Server : BackgroundService
     {
         public readonly ILogger<Server> Logger;
         public readonly Network Network;
         public readonly ReciveHandler ReciveHandler;
         public readonly EventConnection EventServer;
+
+        public ValidateClient ValidateClient = (int networkType) => true;
 
         public Server(ILogger<Server> logger, Network network, ReciveHandler serverHandler, EventConnection eventServer)
         {
@@ -71,11 +78,6 @@ namespace MainServer
                     {
                         // OnClientConnect(Network.GetClient(clientId));
                     }
-                    return;
-                case NETWORK_COMMANDS.SC_Handshake:
-                case NETWORK_COMMANDS.SC_ACK:
-                    packet.Reset(false);
-                    EventServer.HandlePacket(clientId, packet);
                     return;
                 case NETWORK_COMMANDS.CS_Command:
                     bool isAdminCmd = packet.ReadBool();

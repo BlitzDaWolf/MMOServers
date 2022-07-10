@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using NetCommen;
+using NetCommen.NetworkClient;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -57,6 +58,8 @@ namespace MainServer
             }
             else
             {
+                Logger.LogInformation($"N({neededResponse})");
+                Logger.LogInformation($"R({response})");
                 Logger.LogInformation($"Client({id}) failed the handshake");
                 c.tcp.Disconect(false, "");
                 return false;

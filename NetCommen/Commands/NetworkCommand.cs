@@ -1,6 +1,6 @@
 ﻿using NetCommen.Interface;
 
-namespace NetCommen
+namespace NetCommen.Commands
 {
     public class NetworkCommand : IPackage
     {

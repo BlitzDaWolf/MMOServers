@@ -1,4 +1,5 @@
 ﻿using NetCommen;
+using NetCommen.Object;
 
 namespace TestCommon
 {

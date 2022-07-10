@@ -1,5 +1,6 @@
 ﻿using NetCommen.Interface;
-namespace NetCommen
+
+namespace NetCommen.Object
 {
     public class NetworkObjectList : List<IPackage>, IPackage
     {

@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using NetCommen;
 using NetCommen.Interface;
+using NetCommen.NetworkClient;
 using System.Net;
 using System.Net.Sockets;
 
