@@ -1,7 +1,9 @@
 ﻿using NetCommen;
 using NetCommen.NetworkClient;
 using NetCommen.Object;
+using System;
 using System.Net;
+using System.Threading;
 
 namespace ClientCommon
 {
@@ -58,7 +60,7 @@ namespace ClientCommon
                 case NETWORK_COMMANDS.SC_ACK:
                     bool err = packet.ReadBool();
                     int id = packet.ReadInt();
-                    IPEndPoint? endPoint = (IPEndPoint?)Client.tcp.socket.Client.LocalEndPoint;
+                    IPEndPoint endPoint = (IPEndPoint)Client.tcp.socket.Client.LocalEndPoint;
                     if (endPoint == null)
                         return;
 

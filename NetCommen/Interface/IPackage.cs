@@ -2,9 +2,9 @@
 {
     public interface IPackage
     {
-        public Packet ServerPack();
-        public Packet ClientPack();
+        Packet ServerPack();
+        Packet ClientPack();
 
-        public void UnPack(Packet pkt);
+        void UnPack(Packet pkt);
     }
 }

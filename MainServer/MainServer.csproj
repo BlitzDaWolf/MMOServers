@@ -14,7 +14,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ClientCommon\ClientCommon.csproj" />
-    <ProjectReference Include="..\NetCommen\NetCommen.csproj" />
     <ProjectReference Include="..\ServerCommon\ServerCommon.csproj" />
   </ItemGroup>
 </Project>
