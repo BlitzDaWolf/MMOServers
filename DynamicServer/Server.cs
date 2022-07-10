@@ -1,4 +1,6 @@
-﻿using DynamicServer;
+﻿using MainServer;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using NetCommen;
 using NetCommen.Commands;
 using NetCommen.NetworkClient;
@@ -6,7 +8,7 @@ using NetCommen.Object;
 using ServerCommon;
 using System.Diagnostics;
 
-namespace MainServer
+namespace DynamicServer
 {
     public delegate bool ValidateClient(int networkType);
 

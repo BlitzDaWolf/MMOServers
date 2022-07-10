@@ -7,23 +7,7 @@ using System.Threading.Tasks;
 
 namespace NetCommen
 {
-    /// <summary>Sent from server to client.</summary>
-    public enum ServerPackets
-    {
-        welcome = 1,
-        spawnPlayer,
-        playerPosition,
-        playerRotation
-    }
-
-    /// <summary>Sent from client to server.</summary>
-    public enum ClientPackets
-    {
-        welcomeReceived = 1,
-        playerMovement
-    }
-
-    public class Packet : IDisposable
+    public class Packet
     {
         private List<byte> buffer;
         private byte[] readableBuffer;

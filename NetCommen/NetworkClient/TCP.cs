@@ -83,7 +83,7 @@ namespace NetCommen.NetworkClient
             stream = socket.GetStream();
             receivedData = new Packet();
 
-            NetworkCallbacks.Conncted();
+            c.Conncted();
             stream.BeginRead(receiveBuffer, 0, receiveBuffer.Length, ReciveCallback, null);
         }
 

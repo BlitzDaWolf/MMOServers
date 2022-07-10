@@ -21,10 +21,10 @@ namespace Client
 
         public void Login()
         {
-            Console.Write("Username> ");
-            string username = Console.ReadLine();
-            Console.Write("Password> ");
-            string password = Console.ReadLine();
+            string username = "User"; // lConsole.ReadLine();
+            string password = "password"; // Console.ReadLine();
+
+            Console.ReadLine();
 
             Packet pkt = new Packet(NETWORK_COMMANDS.CS_Action);
             pkt.Write(false);

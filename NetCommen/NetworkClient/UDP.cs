@@ -66,11 +66,9 @@ namespace NetCommen.NetworkClient
 
             sendData = HandleSend;
 
-            using (Packet pkt = new Packet())
-            {
-                pkt.WriteLength();
-                SendData(pkt);
-            }
+            Packet pkt = new Packet();
+            pkt.WriteLength();
+            SendData(pkt);
         }
 
         private void ReceiveCallback(IAsyncResult _result)
@@ -102,10 +100,8 @@ namespace NetCommen.NetworkClient
 
         public void HandleData(byte[] data)
         {
-            using (Packet packet = new Packet(data))
-            {
-                HandleData(packet);
-            }
+            Packet packet = new Packet(data);
+            HandleData(packet);
         }
 
         public void HandleData(Packet _packetData)

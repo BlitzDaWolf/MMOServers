@@ -30,6 +30,7 @@ namespace NetCommen.NetworkClient
 
         public PacketHandler packetHandle = (int i, Packet p) => { };
         public DisconectHandler disconectHandler = (int i) => {};
+        public OnConnected Conncted = () => { };
 
         public Client(int _clientId)
         {

@@ -12,8 +12,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DynamicServer\DynamicServer.csproj" />
     <ProjectReference Include="..\EventCommon\EventCommon.csproj" />
-    <ProjectReference Include="..\MainServer\MainServer.csproj" />
     <ProjectReference Include="..\NetCommen\NetCommen.csproj" />
     <ProjectReference Include="..\TestCommon\TestCommon.csproj" />
   </ItemGroup>

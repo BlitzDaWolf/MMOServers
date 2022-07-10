@@ -14,17 +14,14 @@ namespace TestServer
     {
         public ILogger<CCommandHandler> Logger { get; }
         public Network Network { get; }
-        public EventConnection Connection { get; }
         public CustomServer Server { get => CustomServer.Instance; }
 
         public CCommandHandler(
             ILogger<CCommandHandler> logger,
-            Network network,
-            EventConnection connection)
+            Network network)
         {
             Logger = logger;
             Network = network;
-            Connection = connection;
         }
 
         public void HandlePing(int clientId, string[] arguments)

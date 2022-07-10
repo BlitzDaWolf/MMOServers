@@ -1,3 +1,4 @@
+using DynamicServer;
 using EventCommon;
 using MainServer;
 using NetCommen;
@@ -10,16 +11,22 @@ namespace TestServer
 {
     public class CustomServer : Server
     {
-        public ServerHandler ServerHandler { get; private set; }
+        public readonly EventConnection EventConnection;
+
         public List<NPC> npcs { get; private set; } = new List<NPC>();
         public Dictionary<int, Player> players { get; set; } = new Dictionary<int, Player>();
 
         public static CustomServer Instance { get; internal set; }
 
-        public CustomServer(ILogger<CustomServer> logger, Network network, ServerHandler handler, ReciveHandler reciveHandler, EventConnection eventConnection, CCommandHandler commandHandler) :
-            base(logger, network, reciveHandler, eventConnection)
+        public CustomServer(
+            ILogger<CustomServer> logger,
+            Network network,
+            ReciveHandler reciveHandler,
+            CCommandHandler commandHandler,
+            EventConnection eventConnection) :
+            base(logger, network, reciveHandler)
         {
-            ServerHandler = handler;
+            this.EventConnection = eventConnection;
 
             Instance = this;
 
@@ -34,10 +41,9 @@ namespace TestServer
 
         public override async Task ServerTick()
         {
-            foreach (var item in npcs)
-            {
-                // Network.SendToAllClientsUdp(item.Move());
-            }
+            NetworkObjectList list = new NetworkObjectList();
+
+            Network.SendToAllClients(list, 1);
             await Task.Delay(1);
         }
 
@@ -57,21 +63,26 @@ namespace TestServer
                     switch (commandID)
                     {
                         case 1:
-                            string Username = packet.ReadString();
-                            string Password = packet.ReadString();
-                            // Validate user thruw private webserver
-                            players[clientId].Loggedin = true;
-                            players[clientId].Admin = true;
-                            players[clientId].Name = Username;
-
-                            NetworkObjectList list = new NetworkObjectList();
-
-                            foreach (var player in players.Values.Where(x => x.Loggedin))
+                            if (players.ContainsKey(clientId))
                             {
-                                list.Add(player);
+                                if (players[clientId].Loggedin == true)
+                                    return;
+                                string Username = packet.ReadString();
+                                string Password = packet.ReadString();
+                                // Validate user thruw private webserver
+                                players[clientId].Loggedin = true;
+                                players[clientId].Admin = true;
+                                players[clientId].Name = Username;
+
+                                NetworkObjectList list = new NetworkObjectList();
+
+                                foreach (var player in players.Values.Where(x => x.Loggedin))
+                                {
+                                    list.Add(player);
+                                }
+                                Network.GetClient(clientId)?.NetworkClient[1].SendData(list);
+                                Network.SendToAllClients(players[clientId], 1, clientId);
                             }
-                            Network.GetClient(clientId).NetworkClient[1].SendData(list);
-                            Network.SendToAllClients(players[clientId], 1, clientId);
                             return;
                     }
                     return;
@@ -80,6 +91,8 @@ namespace TestServer
 
         public override void OnClientConnect(Client c)
         {
+            if (c == null)
+                return;
             Logger.LogInformation("A new player joined the server");
             foreach (var item in npcs)
             {
@@ -104,6 +117,12 @@ namespace TestServer
             {
                 players.Remove(clientId);
             }
+        }
+
+        protected override Task ExecuteAsync(CancellationToken stoppingToken)
+        {
+            EventConnection.Connect();
+            return base.ExecuteAsync(stoppingToken);
         }
     }
 }

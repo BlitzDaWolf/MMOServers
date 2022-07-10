@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DynamicServer\DynamicServer.csproj" />
     <ProjectReference Include="..\EventCommon\EventCommon.csproj" />
-    <ProjectReference Include="..\EventServer\EventServer.csproj" />
   </ItemGroup>
 </Project>

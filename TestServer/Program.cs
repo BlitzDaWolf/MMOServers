@@ -1,17 +1,13 @@
-using MainServer;
+using DynamicServer;
 using TestServer;
 
 IHost host = Host.CreateDefaultBuilder(args)
     .ConfigureServices(services =>
     {
-        services.AddSingleton<Network>();
-        services.AddSingleton<ReciveHandler>();
-        services.AddSingleton<EventConnection>();
-
         services.AddSingleton<CCommandHandler>();
-        services.AddSingleton<ServerHandler>();
-        services.AddHostedService<CustomServer>();
     })
+    .AddClientConnection<EventConnection>()
+    .AddServerServices<CustomServer>()
     .Build();
 
 await host.RunAsync();
