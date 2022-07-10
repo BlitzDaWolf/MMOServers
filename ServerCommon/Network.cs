@@ -21,6 +21,9 @@ namespace MainServer
 
         private TcpListener TcpListener;
         private UdpClient UdpListener;
+        public DisconectHandler disconectHandler = (int i) => { };
+
+        public OnClientConnected Connected = (Client c) => { };
 
         public int ConnectedClients
         {
@@ -37,9 +40,7 @@ namespace MainServer
             MaxPlayers = configuration.GetValue<int>("server:maxplayers");
             Port = configuration.GetValue<int>("server:port");
 
-            Client.disconectHandler = PlayerDisconect;
-
-            NetworkCallbacks.sendData = SendUDPData;
+            // sendData = SendUDPData;
 
             InitiliazeClients();
         }
@@ -112,6 +113,7 @@ namespace MainServer
             }
             else
             {
+                disconectHandler(clientId);
                 Logger.LogInformation($"Client({clientId}) disconected");
 
                 clients[clientId].Disconect();
@@ -190,6 +192,8 @@ namespace MainServer
                     {
                         // If this is a new connection
                         clients[_clientId].udp.Connect(_clientEndPoint);
+                        Client c = GetClient(_clientId);
+                        Connected(c);
                         return;
                     }
 
@@ -231,9 +235,12 @@ namespace MainServer
         {
             for (int i = 1; i <= MaxPlayers; i++)
             {
-                clients.Add(i, new Client(i) { packetHandle = (int i, Packet p) => {
-                    packetHandle(i, p);
-                } });
+                clients.Add(i, new Client(i)
+                {
+                    packetHandle = (int i, Packet p) => packetHandle(i, p),
+                    disconectHandler = (int i) => PlayerDisconect(i)
+                });
+                clients[i].udp.sendData = SendUDPData;
             }
         }
     }

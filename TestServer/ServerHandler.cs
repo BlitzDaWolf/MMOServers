@@ -1,7 +1,7 @@
 ﻿using MainServer;
 using NetCommen;
 
-namespace TestEventServer
+namespace TestServer
 {
     public class ServerHandler
     {

@@ -40,6 +40,14 @@ namespace EventServer
 
             switch (packetID)
             {
+                case NETWORK_COMMANDS.List:
+                    NetworkObjectList list = new NetworkObjectList();
+                    list.UnPack(packet);
+                    foreach (var i in list.unpackedPackets)
+                    {
+                        HandlePacket(clientId, i);
+                    }
+                    return;
                 case NETWORK_COMMANDS.CS_ALIVE:
                     Network.GetClient(clientId).tcp.WriteHandshake();
                     return;

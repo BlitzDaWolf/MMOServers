@@ -15,7 +15,7 @@ namespace NetCommen
 
     public static class NetworkCallbacks
     {
-        public static SendData sendData = (IPEndPoint endPoint, Packet _packet) => { };
+        // public static SendData sendData = (IPEndPoint endPoint, Packet _packet) => { };
 
         public static CreateChallange createChallange = () => 0;
         public static CheckChalange checkChalange = (int a) => 0;

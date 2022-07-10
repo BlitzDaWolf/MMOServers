@@ -11,10 +11,13 @@ namespace ClientCommon
         {
             Client = new Client(-1);
             Client.packetHandle = HandlePacket;
+            Client.disconectHandler = OnDisconect;
 
             NetworkCallbacks.Conncted = Connected;
         }
 
+        public virtual void OnDisconect(int id) { }
+        public virtual void OnConnected() { }
 
         /// <summary>
         /// Handles the default incoming packets
@@ -26,6 +29,14 @@ namespace ClientCommon
             int packetId = packet.ReadInt();
             switch (packetId)
             {
+                case NETWORK_COMMANDS.List:
+                    NetworkObjectList list = new NetworkObjectList();
+                    list.UnPack(packet);
+                    foreach (var i in list.unpackedPackets)
+                    {
+                        HandlePacket(clientId, i);
+                    }
+                    return;
                 case NETWORK_COMMANDS.SC_Handshake:
                     string NetworkVersion = packet.ReadString();
                     if (NetworkVersion != NETWORK_COMMANDS.NETWORK_VERSION)
@@ -70,6 +81,9 @@ namespace ClientCommon
             pkt.Write(0);
             pkt.WriteLength();
             Client.tcp.SendData(pkt);
+
+            Thread t1 = new Thread(OnConnected);
+            t1.Start();
         }
 
         /// <summary>

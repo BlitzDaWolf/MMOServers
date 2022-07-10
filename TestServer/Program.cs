@@ -1,5 +1,5 @@
 using MainServer;
-using TestEventServer;
+using TestServer;
 
 IHost host = Host.CreateDefaultBuilder(args)
     .ConfigureServices(services =>
@@ -8,6 +8,7 @@ IHost host = Host.CreateDefaultBuilder(args)
         services.AddSingleton<ReciveHandler>();
         services.AddSingleton<EventConnection>();
 
+        services.AddSingleton<CCommandHandler>();
         services.AddSingleton<ServerHandler>();
         services.AddHostedService<CustomServer>();
     })

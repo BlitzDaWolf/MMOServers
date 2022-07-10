@@ -66,9 +66,10 @@ namespace NetCommen
         }
 
         /// <summary>Inserts the length of the packet's content at the start of the buffer.</summary>
-        public void WriteLength()
+        public Packet WriteLength()
         {
             buffer.InsertRange(0, BitConverter.GetBytes(buffer.Count)); // Insert the byte length of the packet at the very beginning
+            return this;
         }
 
         /// <summary>Inserts the given int at the start of the buffer.</summary>
@@ -125,52 +126,60 @@ namespace NetCommen
         #region Write Data
         /// <summary>Adds a byte to the packet.</summary>
         /// <param name="_value">The byte to add.</param>
-        public void Write(byte _value)
+        public Packet Write(byte _value)
         {
             buffer.Add(_value);
+            return this;
         }
         /// <summary>Adds an array of bytes to the packet.</summary>
         /// <param name="_value">The byte array to add.</param>
-        public void Write(byte[] _value)
+        public Packet Write(byte[] _value)
         {
             buffer.AddRange(_value);
+            return this;
         }
         /// <summary>Adds a short to the packet.</summary>
         /// <param name="_value">The short to add.</param>
-        public void Write(short _value)
+        public Packet Write(short _value)
         {
             buffer.AddRange(BitConverter.GetBytes(_value));
+            return this;
         }
         /// <summary>Adds an int to the packet.</summary>
         /// <param name="_value">The int to add.</param>
-        public void Write(int _value)
+        public Packet Write(int _value)
         {
             buffer.AddRange(BitConverter.GetBytes(_value));
+            return this;
         }
         /// <summary>Adds a long to the packet.</summary>
         /// <param name="_value">The long to add.</param>
-        public void Write(long _value)
+        public Packet Write(long _value)
         {
             buffer.AddRange(BitConverter.GetBytes(_value));
+            return this;
         }
         /// <summary>Adds a float to the packet.</summary>
         /// <param name="_value">The float to add.</param>
-        public void Write(float _value)
+        public Packet Write(float _value)
         {
             buffer.AddRange(BitConverter.GetBytes(_value));
+            return this;
         }
         /// <summary>Adds a bool to the packet.</summary>
         /// <param name="_value">The bool to add.</param>
-        public void Write(bool _value)
+        public Packet Write(bool _value)
         {
             buffer.AddRange(BitConverter.GetBytes(_value));
+            return this;
         }
         /// <summary>Adds a string to the packet.</summary>
         /// <param name="_value">The string to add.</param>
-        public void Write(string _value)
+        public Packet Write(string _value)
         {
             Write(_value.Length); // Add the length of the string to the packet
             buffer.AddRange(Encoding.ASCII.GetBytes(_value)); // Add the string itself
+            return this;
         }
         #endregion
 
@@ -366,6 +375,26 @@ namespace NetCommen
         {
             Dispose(true);
             GC.SuppressFinalize(this);
+        }
+
+        public override string ToString()
+        {
+            string result = "00 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15\n";
+            int a = (int)Math.Ceiling(buffer.Count / 16d);
+            for (int i = 0; i < a; i++)
+            {
+                int to = 16 + i * 16;
+                for (int j = i*16; j < Math.Min(to, buffer.Count); j++)
+                {
+                    if (j < buffer.Count)
+                        result += BitConverter.ToString(new byte[] { buffer[j] }) + " ";
+                    else
+                        result += "   ";
+                }
+                result += "\n";
+            }
+
+            return result;
         }
     }
 }

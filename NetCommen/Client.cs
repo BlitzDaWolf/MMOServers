@@ -29,7 +29,7 @@ namespace NetCommen
         }
 
         public PacketHandler packetHandle = (int i, Packet p) => { };
-        public static DisconectHandler disconectHandler = (int i) => {};
+        public DisconectHandler disconectHandler = (int i) => {};
 
         public Client(int _clientId)
         {
@@ -170,7 +170,7 @@ namespace NetCommen
                     int _byteLength = stream.EndRead(_result);
                     if (_byteLength <= 0)
                     {
-                        disconectHandler(id);
+                        c.disconectHandler(id);
                         return;
                     }
 
@@ -182,7 +182,7 @@ namespace NetCommen
                 }
                 catch (Exception e)
                 {
-                    disconectHandler(id);
+                    c.disconectHandler(id);
                 }
             }
 
@@ -242,6 +242,8 @@ namespace NetCommen
 
             public int id;
 
+            public SendData sendData = (IPEndPoint endPoint, Packet _packet) => { };
+
             public UDP(int _id, Client c)
             {
                 this.c = c;
@@ -280,10 +282,11 @@ namespace NetCommen
                 socket.Connect(endPoint);
                 socket.BeginReceive(ReceiveCallback, null);
 
-                NetworkCallbacks.sendData = HandleSend;
+                sendData = HandleSend;
 
                 using (Packet pkt = new Packet())
                 {
+                    pkt.WriteLength();
                     SendData(pkt);
                 }
             }
@@ -305,7 +308,7 @@ namespace NetCommen
             public void SendData(Packet _packet)
             {
                 if (endPoint != null)
-                    NetworkCallbacks.sendData(endPoint, _packet);
+                    sendData(endPoint, _packet);
             }
 
             public void SendData(IPackage packet)

@@ -22,6 +22,12 @@ namespace MainServer
             Connect(ip, port);
         }
 
+        public override void OnDisconect(int id)
+        {
+            Logger.LogInformation("Event server has closed");
+            Environment.Exit(0);
+        }
+
         public override void ovr_HandleData(int clientId, Packet packet, int PacketId)
         {
 

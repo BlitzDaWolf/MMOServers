@@ -4,13 +4,15 @@
     {
         public const string NETWORK_VERSION = "1.0.0";
 
-        public const int KEEPALIVE = 20;
+        public const int KEEPALIVE          = 20;
 
-        public const int CS = 400;
-        public const int SC = 1000;
+        public const int List               = 21;
 
-        public const int ES = 1600;
-        public const int SE = ES + 200;
+        public const int CS                 = 400;
+        public const int SC                 = 1000;
+
+        public const int ES                 = 1600;
+        public const int SE                 = ES + 200;
 
         #region Client_Server
         public const int CS_Handshake       = CS + 1;
@@ -54,6 +56,8 @@
         public const int SC_NPCDespawn      = SC_NPC + 2;
         public const int SC_NPCAction       = SC_NPC + 3;
         public const int SC_NPCSync         = SC_NPC + 3;
+
+        public const int SC_Ping            = SC + 60;
         #endregion
 
         #region Server_Event

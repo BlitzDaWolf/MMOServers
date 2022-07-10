@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace TestCommon
 {
+
     public class NPC : NetworkObject
     {
         public string Name { get; set; }

@@ -31,6 +31,11 @@ namespace ServerCommon
         /// <param name="cmd">Command to execute</param>
         public static void ExecuteCommand(int clientId, NetworkCommand cmd)
         {
+            Console.WriteLine(cmd.CommandId);
+            foreach (var arg in cmd.Arguments)
+            {
+                Console.WriteLine(arg);
+            }
             if (Commands.ContainsKey(cmd.CommandId))
             {
                 Commands[cmd.CommandId](clientId, cmd.Arguments);

@@ -18,12 +18,14 @@ namespace NetCommen
             string args = "";
             foreach(string arg in Arguments)
             {
-                args = $"{arg} ";
+                if (arg.StartsWith("/"))
+                    continue;
+                args += $"{arg} ";
             }
 
             pkt.Write(args);
 
-            return new Packet();
+            return pkt;
         }
 
         public virtual Packet ServerPack()
@@ -34,7 +36,8 @@ namespace NetCommen
         public virtual void UnPack(Packet pkt)
         {
             CommandId = pkt.ReadInt();
-            Arguments = pkt.ReadString().Split(' ');
+            string t = pkt.ReadString();
+            Arguments = t.Split(' ').Where(x => !string.IsNullOrWhiteSpace(x)).ToArray();
         }
     }
 }

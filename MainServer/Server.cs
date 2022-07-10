@@ -19,8 +19,12 @@ namespace MainServer
             EventServer = eventServer;
 
             Network.packetHandle = HandlePacket;
+            Network.disconectHandler = OnClientDisconect;
+
             NetworkCallbacks.createChallange = GenerateChallange;
             NetworkCallbacks.checkChalange = CheckChallange;
+
+            Network.Connected = OnClientConnect;
         }
 
         /// <summary>
@@ -51,13 +55,21 @@ namespace MainServer
 
             switch (packetID)
             {
+                case NETWORK_COMMANDS.List:
+                    NetworkObjectList list = new NetworkObjectList();
+                    list.UnPack(packet);
+                    foreach (var i in list.unpackedPackets)
+                    {
+                        HandlePacket(clientId, i);
+                    }
+                    return;
                 case NETWORK_COMMANDS.CS_ALIVE:
                     Network.GetClient(clientId).tcp.WriteHandshake();
                     return;
                 case NETWORK_COMMANDS.CS_Handshake:
                     if (ReciveHandler.CS_Handshake(clientId, packet))
                     {
-                        OnClientConnect(Network.GetClient(clientId));
+                        // OnClientConnect(Network.GetClient(clientId));
                     }
                     return;
                 case NETWORK_COMMANDS.SC_Handshake:
@@ -95,6 +107,7 @@ namespace MainServer
             if (c == null)
                 return;
         }
+        public virtual void OnClientDisconect(int clientId) { }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
