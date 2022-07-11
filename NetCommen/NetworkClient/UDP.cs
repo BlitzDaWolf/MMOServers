@@ -1,4 +1,5 @@
-﻿using NetCommen.Interface;
+﻿using Algo;
+using NetCommen.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -85,10 +86,22 @@ namespace NetCommen.NetworkClient
             HandleData(_data);
         }
 
-        public void SendData(Packet _packet)
+        public void SendData(Packet packet)
         {
+            if (packet.EncryptFlag)
+            {
+                byte[] before = packet.ReadBytes(5);
+                byte[] result = Encryption.Instance.Encrypt(packet.ReadBytes(packet.UnreadLength()));
+                packet = new Packet(before);
+                packet.Write(result);
+
+                Packet _packetData = new Packet(packet.ToArray());
+
+                before = _packetData.ReadBytes(5);
+                byte[] mid = _packetData.ReadBytes(_packetData.UnreadLength());
+            }
             if (endPoint != null)
-                sendData(endPoint, _packet);
+                sendData(endPoint, packet);
         }
 
         public void SendData(IPackage packet)
@@ -107,6 +120,24 @@ namespace NetCommen.NetworkClient
         public void HandleData(Packet _packetData)
         {
             int _packetLength = _packetData.ReadInt();
+            bool encrypted = _packetData.ReadBool();
+
+            if (encrypted)
+            {
+                _packetData = new Packet(_packetData.ToArray());
+
+                byte[] before = _packetData.ReadBytes(9);
+                int toRead = _packetData.UnreadLength();
+
+                byte[] mid = _packetData.ReadBytes(toRead, false);
+                byte[] after = Decryption.Instance.Decrypt(mid);
+
+                _packetData = new Packet(after);
+            }
+
+            // _packetData = (encrypted) ? new Packet(_packetData.ReadBytes(_packetData.UnreadLength())) : _packetData;
+            _packetData.EncryptFlag = encrypted;
+
             c.packetHandle(id, _packetData);
         }
 

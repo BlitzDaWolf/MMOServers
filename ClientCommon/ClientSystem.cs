@@ -18,7 +18,7 @@ namespace ClientCommon
             Client.packetHandle = HandlePacket;
             Client.disconectHandler = OnDisconect;
 
-            NetworkCallbacks.Conncted = Connected;
+            Client.Conncted = Connected;
         }
 
         public virtual void OnDisconect(int id) { }

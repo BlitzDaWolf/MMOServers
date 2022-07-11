@@ -14,6 +14,10 @@ namespace NetCommen
     public delegate int CreateChallange();
     public delegate int CheckChalange(int answer);
 
+    public delegate byte[] EncryptDate(byte[] data);
+    public delegate byte[] DecryptDate(byte[] data);
+    public delegate bool IsEncreypted(byte[] data);
+
     public static class NetworkCallbacks
     {
         // public static SendData sendData = (IPEndPoint endPoint, Packet _packet) => { };

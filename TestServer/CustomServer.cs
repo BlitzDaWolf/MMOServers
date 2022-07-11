@@ -47,7 +47,7 @@ namespace TestServer
             await Task.Delay(1);
         }
 
-        public override void Ovr_HandlePacket(int clientId, Packet packet, int packetID)
+        public override void OnHandlePacket(int clientId, Packet packet, int packetID)
         {
             // Logger.LogInformation($"Packet({packetID})");
             switch (packetID)

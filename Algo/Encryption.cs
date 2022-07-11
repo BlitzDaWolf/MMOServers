@@ -2,15 +2,15 @@
 
 namespace Algo
 {
-    public class Decryption
+    public class Encryption
     {
-        private static Decryption _instance;
-        public static Decryption Instance
+        private static Encryption _instance;
+        public static Encryption Instance
         {
             get
             {
-                if (_instance == null)
-                    _instance = new Decryption();
+                if( _instance == null )
+                    _instance = new Encryption();
                 return _instance;
             }
             set { _instance = value; }
@@ -18,22 +18,17 @@ namespace Algo
 
         public byte[] Key = new byte[4] { 0x50, 0x5f, 0x9a, 0x84 };
 
-        public virtual byte[] Decrypt(byte[] value)
+        public virtual byte[] Encrypt(byte[] value)
         {
             List<byte> result = new List<byte>();
 
             for (int i = 0; i < value.Length; i++)
             {
-                int r = (Key[i % 4] ^ value[i]);
+                int r = (value[i] ^ Key[i % 4]);
                 result.Add((byte)r);
             }
 
             return result.ToArray();
-        }
-
-        public virtual bool IsEncrypted(byte[] value)
-        {
-            return false;
         }
     }
 }

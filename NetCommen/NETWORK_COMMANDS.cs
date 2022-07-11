@@ -2,7 +2,7 @@
 {
     public static class NETWORK_COMMANDS
     {
-        public const string NETWORK_VERSION = "1.0.1";
+        public const string NETWORK_VERSION = "1.0.5";
 
         public const int KEEPALIVE          = 20;
 

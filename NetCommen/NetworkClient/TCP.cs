@@ -1,4 +1,5 @@
-﻿using NetCommen.Interface;
+﻿using Algo;
+using NetCommen.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -116,6 +117,14 @@ namespace NetCommen.NetworkClient
 
         public void SendData(Packet packet)
         {
+            if (packet.EncryptFlag)
+            {
+                byte[] before = packet.ReadBytes(5);
+                byte[] result = Algo.Encryption.Instance.Encrypt(packet.ReadBytes(packet.UnreadLength()));
+                packet = new Packet(before);
+                packet.Write(result);
+            }
+
             try
             {
                 if (socket != null)
@@ -179,6 +188,23 @@ namespace NetCommen.NetworkClient
                 {
                     byte[] _packetbytes = receivedData.ReadBytes(_packetLength);
                     Packet _packet = new Packet(_packetbytes);
+                    bool encrypted = _packet.ReadBool();
+
+                    if (encrypted)
+                    {
+                        _packet = new Packet(_packet.ToArray());
+
+                        byte[] before = _packet.ReadBytes(9);
+                        int toRead = _packet.UnreadLength();
+
+                        byte[] mid = _packet.ReadBytes(toRead, false);
+                        byte[] after = Decryption.Instance.Decrypt(mid);
+
+                        // before.ToList().AddRange(after);
+
+                        _packet = new Packet(after);
+                    }
+
                     c.packetHandle(id, _packet);
                 }
 

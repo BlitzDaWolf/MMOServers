@@ -28,7 +28,7 @@ namespace TestEventServer
 
         }
 
-        public override void Ovr_HandlePacket(int clientId, Packet packet, int packetID)
+        public override void OnHandlePacket(int clientId, Packet packet, int packetID)
         {
             Logger.LogInformation("Testing");
         }

@@ -4,10 +4,10 @@ using NetCommen.NetworkClient;
 
 namespace DynamicServer
 {
-    public interface IServer : IHostedService
+    public interface IServer
     {
         void HandlePacket(int clientId, Packet packet);
-        void Ovr_HandlePacket(int clientId, Packet packet, int packetID) { }
+        void OnHandlePacket(int clientId, Packet packet, int packetID) { }
         void OnClientConnect(Client? c);
         Task ServerTick();
     }

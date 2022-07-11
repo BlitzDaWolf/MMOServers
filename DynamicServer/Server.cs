@@ -1,4 +1,5 @@
-﻿using MainServer;
+﻿using Algo;
+using MainServer;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using NetCommen;
@@ -97,14 +98,14 @@ namespace DynamicServer
                     return;
             }
 
-            Ovr_HandlePacket(clientId, packet, packetID);
+            OnHandlePacket(clientId, packet, packetID);
         }
 
         /// <summary>
         /// Executes evry update tick
         /// </summary>
         public virtual async Task ServerTick() => await Task.Delay(1);
-        public virtual void Ovr_HandlePacket(int clientId, Packet packet, int packetID) { }
+        public virtual void OnHandlePacket(int clientId, Packet packet, int packetID) { }
         public virtual void OnClientConnect(Client? c)
         {
             if (c == null)
@@ -125,17 +126,7 @@ namespace DynamicServer
 
             while (!stoppingToken.IsCancellationRequested)
             {
-                /*if (ticks % 40 == 0)
-                {
-                    if (ticks != 0)
-                    {
-                        long tps = ticks / (stopwatch.Elapsed.Ticks / 10000000);
-                        Logger.LogInformation($"{stopwatch.Elapsed}/{tps}");
-                    }
-                }*/
-
                 await ServerTick();
-
 
                 while (stopwatch.Elapsed.Ticks < nextLastTick)
                     await Task.Delay(1);

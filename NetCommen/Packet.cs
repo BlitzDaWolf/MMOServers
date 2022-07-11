@@ -9,9 +9,11 @@ namespace NetCommen
 {
     public class Packet
     {
+        public bool EncryptFlag { get; set; }
+
         private List<byte> buffer;
         private byte[] readableBuffer;
-        private int readPos;
+        public int readPos { get; private set; }
 
         /// <summary>Creates a new empty packet (without an ID).</summary>
         public Packet()
@@ -52,6 +54,7 @@ namespace NetCommen
         /// <summary>Inserts the length of the packet's content at the start of the buffer.</summary>
         public Packet WriteLength()
         {
+            buffer.InsertRange(0, BitConverter.GetBytes(EncryptFlag));
             buffer.InsertRange(0, BitConverter.GetBytes(buffer.Count)); // Insert the byte length of the packet at the very beginning
             return this;
         }

@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Algo;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using NetCommen;
 using NetCommen.Interface;
@@ -44,6 +45,10 @@ namespace MainServer
             // sendData = SendUDPData;
 
             InitiliazeClients();
+        }
+
+        public Network(ILogger<Network> logger, IConfiguration configuration, Encryption encryption, Decryption decryption) : this(logger, configuration)
+        {
         }
 
         /// <summary>

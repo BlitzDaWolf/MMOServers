@@ -1,4 +1,5 @@
-﻿using ClientCommon;
+﻿using Algo;
+using ClientCommon;
 using NetCommen;
 using NetCommen.Commands;
 using TestCommon;
@@ -11,6 +12,9 @@ namespace Client
 
         public CustomClient() : base()
         {
+            Encryption e = new Encryption();
+            Decryption d = new Decryption();
+
             checkChalange = CheckChallange;
         }
 
@@ -27,6 +31,7 @@ namespace Client
             Console.ReadLine();
 
             Packet pkt = new Packet(NETWORK_COMMANDS.CS_Action);
+            pkt.EncryptFlag = true;
             pkt.Write(false);
             pkt.Write(1);
             pkt.Write(username);
