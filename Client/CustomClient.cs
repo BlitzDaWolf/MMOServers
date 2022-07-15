@@ -30,13 +30,14 @@ namespace Client
 
             Console.ReadLine();
 
-            Packet pkt = new Packet(NETWORK_COMMANDS.CS_Action);
+            Packet pkt = new Packet(NETWORK_COMMANDS.CS_SYNC);
             pkt.EncryptFlag = true;
             pkt.Write(false);
             pkt.Write(1);
             pkt.Write(username);
             pkt.Write(password);
             pkt.WriteLength();
+            Console.WriteLine(pkt);
             Client.NetworkClient[1].SendData(pkt);
         }
 
@@ -79,6 +80,7 @@ namespace Client
         public override void ovr_HandleData(int clientId, Packet packet, int PacketId)
         {
             // Console.WriteLine(PacketId);
+            Console.WriteLine(packet);
             switch (PacketId)
             {
                 case NETWORK_COMMANDS.SC_Ping:

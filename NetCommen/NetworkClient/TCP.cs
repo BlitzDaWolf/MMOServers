@@ -4,13 +4,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NetCommen.NetworkClient
 {
     public class TCP : INetworkClient
     {
+
         public const int dataBufferSize = 4096;
 
         private readonly Client c;
@@ -186,6 +185,10 @@ namespace NetCommen.NetworkClient
 
                 while (_packetLength > 0 && _packetLength <= receivedData.UnreadLength())
                 {
+                    if (receivedData == null)
+                    {
+                        continue;
+                    }
                     byte[] _packetbytes = receivedData.ReadBytes(_packetLength);
                     Packet _packet = new Packet(_packetbytes);
                     bool encrypted = _packet.ReadBool();
@@ -194,15 +197,17 @@ namespace NetCommen.NetworkClient
                     {
                         _packet = new Packet(_packet.ToArray());
 
-                        byte[] before = _packet.ReadBytes(9);
+                        List<byte> before = _packet.ReadBytes(9).ToList();
                         int toRead = _packet.UnreadLength();
 
                         byte[] mid = _packet.ReadBytes(toRead, false);
                         byte[] after = Decryption.Instance.Decrypt(mid);
 
+                        before.AddRange(after);
+
                         // before.ToList().AddRange(after);
 
-                        _packet = new Packet(after);
+                        _packet = new Packet(before.ToArray());
                     }
 
                     c.packetHandle(id, _packet);

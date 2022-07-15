@@ -1,4 +1,6 @@
-﻿namespace NetCommen.Interface
+﻿using System.Collections.Generic;
+
+namespace NetCommen.Interface
 {
     public interface INetworkClient
     {

@@ -12,7 +12,6 @@ namespace NetCommen.NetworkClient
 {
     public class UDP : INetworkClient
     {
-
         public string ip = "127.0.0.1";
         public int port = 7575;
 
@@ -126,13 +125,17 @@ namespace NetCommen.NetworkClient
             {
                 _packetData = new Packet(_packetData.ToArray());
 
-                byte[] before = _packetData.ReadBytes(9);
+                int skip = (IsServer) ? 9 : 5;
+
+                List<byte> before = _packetData.ReadBytes(skip).ToList();
                 int toRead = _packetData.UnreadLength();
 
                 byte[] mid = _packetData.ReadBytes(toRead, false);
                 byte[] after = Decryption.Instance.Decrypt(mid);
 
-                _packetData = new Packet(after);
+                before.AddRange(after);
+                _packetData = new Packet(before.ToArray());
+                _packetData.ReadBytes(skip);
             }
 
             // _packetData = (encrypted) ? new Packet(_packetData.ReadBytes(_packetData.UnreadLength())) : _packetData;

@@ -84,13 +84,14 @@ namespace NetCommen
         {
             return Length() - readPos; // Return the remaining length (unread)
         }
-        public void WriteError(bool hasError, string message = "")
+        public Packet WriteError(bool hasError, string message = "")
         {
             Write(hasError);
             if (hasError)
             {
                 Write(message);
             }
+            return this;
         }
 
         /// <summary>Resets the packet instance to allow it to be reused.</summary>
