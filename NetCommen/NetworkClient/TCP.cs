@@ -197,7 +197,7 @@ namespace NetCommen.NetworkClient
                     {
                         _packet = new Packet(_packet.ToArray());
 
-                        List<byte> before = _packet.ReadBytes(9).ToList();
+                        List<byte> before = _packet.ReadBytes(1).ToList();
                         int toRead = _packet.UnreadLength();
 
                         byte[] mid = _packet.ReadBytes(toRead, false);
@@ -208,6 +208,7 @@ namespace NetCommen.NetworkClient
                         // before.ToList().AddRange(after);
 
                         _packet = new Packet(before.ToArray());
+                        _packet.ReadByte();
                     }
 
                     c.packetHandle(id, _packet);

@@ -67,7 +67,7 @@ namespace NetCommen.Object
             for (int i = 0; i < packets; i++)
             {
                 Packet _packet  = new Packet(pkt.ReadBytes(pkt.ReadInt(false) + 4));
-                int packetSize = _packet.ReadInt();
+                _packet.ReadInt();
                 bool encrypted = _packet.ReadBool();
 
                 if (encrypted)
