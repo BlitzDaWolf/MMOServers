@@ -47,8 +47,6 @@ namespace MainServer
             int response = pkt.ReadInt();
             if(neededResponse == response)
             {
-                Logger.LogInformation($"Client({id}) succseded the handshake");
-
                 Packet p = new Packet(NETWORK_COMMANDS.SC_ACK);
                 p.WriteError(false);
                 p.Write(id);

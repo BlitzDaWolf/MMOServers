@@ -173,12 +173,9 @@ namespace MainServer
         {
             try
             {
-                Logger.LogInformation("Listening for a UDP packet");
                 IPEndPoint _clientEndPoint = new IPEndPoint(IPAddress.Any, 0);
                 byte[] _data = UdpListener.EndReceive(result, ref _clientEndPoint);
                 UdpListener.BeginReceive(UDPReceiveCallback, null);
-
-                Logger.LogInformation("Recived a UDP packet");
 
                 if (_data.Length < 4)
                 {
@@ -220,7 +217,7 @@ namespace MainServer
         {
             TcpClient client = TcpListener.EndAcceptTcpClient(result);
             TcpListener.BeginAcceptTcpClient(TCPConnectCallback, null);
-            Logger.LogInformation($"Incoming connection from {client.Client.RemoteEndPoint}...");
+            // Logger.LogInformation($"Incoming connection from {client.Client.RemoteEndPoint}...");
 
             for (int i = 1; i <= MaxPlayers; i++)
             {
@@ -232,6 +229,7 @@ namespace MainServer
             }
 
             Logger.LogInformation($"{client.Client.RemoteEndPoint} failed to connect: Server full!");
+            client.Close();
         }
 
         /// <summary>

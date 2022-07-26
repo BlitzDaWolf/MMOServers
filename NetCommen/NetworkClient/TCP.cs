@@ -140,8 +140,11 @@ namespace NetCommen.NetworkClient
         public void SendData(IPackage packet)
         {
             Packet pkt = (IsServer) ? packet.ServerPack() : packet.ClientPack();
-            pkt.WriteLength();
-            SendData(pkt);
+            if (pkt != null)
+            {
+                pkt.WriteLength();
+                SendData(pkt);
+            }
         }
 
         private void ReciveCallback(IAsyncResult _result)
